@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BadgeManagement")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bcbaf0aa63b4c364edfd4b31a1f16acd164e8831")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e6ee5c8f0492c2ea33f77d319527a84fa3504dcd")]
 [assembly: System.Reflection.AssemblyProductAttribute("BadgeManagement")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BadgeManagement")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
