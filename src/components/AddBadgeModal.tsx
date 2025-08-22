@@ -85,6 +85,10 @@ const AddBadgeModal: React.FC<AddBadgeModalProps> = ({ show, onClose, onAdd }) =
         "description": "This is a sample OpenBadges v3.0 compliant badge",
         "criteria": {
           "narrative": "Awarded for completing the sample achievement"
+        },
+        "image": {
+          "id": "https://images.credly.com/size/340x340/images/73e4a58b-a8ef-41a3-a7db-9183dd269882/image.png",
+          "type": "Image"
         }
       }
     }
