@@ -48,7 +48,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:5000")
+        policy.WithOrigins(
+                "http://localhost:5000",
+                "https://d67df0a2-2d1d-4b80-97b1-0dbf2bbaa229-00-1imjt3grtp1fv.riker.replit.dev"
+              )
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
