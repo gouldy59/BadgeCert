@@ -185,7 +185,7 @@ namespace BadgeManagement.Controllers
                     return NotFound(new { message = "Badge not found" });
                 }
 
-                var pdfBytes = _pdfService.GenerateBadgePDF(badge);
+                var pdfBytes = await _pdfService.GenerateBadgePDF(badge);
                 var fileName = $"{badge.Name.Replace(" ", "_")}.pdf";
 
                 return File(pdfBytes, "application/pdf", fileName);

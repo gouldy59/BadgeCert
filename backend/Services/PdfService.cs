@@ -1,12 +1,13 @@
 using BadgeManagement.Models;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
+using System.Net.Http;
 
 namespace BadgeManagement.Services
 {
     public class PdfService
     {
-        public byte[] GenerateBadgePDF(Badge badge)
+        public async Task<byte[]> GenerateBadgePDF(Badge badge)
         {
             using (var ms = new MemoryStream())
             {
@@ -27,20 +28,48 @@ namespace BadgeManagement.Services
                 // Badge Image (if available)
                 if (!string.IsNullOrEmpty(badge.ImageUrl))
                 {
-                    var imageHeaderFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12, new BaseColor(0, 123, 255));
-                    var imageHeader = new Paragraph("🖼️ Badge Image", imageHeaderFont)
+                    try
                     {
-                        Alignment = Element.ALIGN_CENTER,
-                        SpacingAfter = 5
-                    };
-                    document.Add(imageHeader);
+                        // Download and embed the actual image
+                        using (var httpClient = new HttpClient())
+                        {
+                            httpClient.Timeout = TimeSpan.FromSeconds(10);
+                            var imageBytes = await httpClient.GetByteArrayAsync(badge.ImageUrl);
+                            var badgeImage = Image.GetInstance(imageBytes);
+                            
+                            // Resize image to fit nicely in PDF
+                            badgeImage.ScaleToFit(100f, 100f);
+                            badgeImage.Alignment = Element.ALIGN_CENTER;
+                            badgeImage.SpacingAfter = 15f;
+                            
+                            document.Add(badgeImage);
+                            
+                            var imageCaption = new Paragraph("Official Badge Image", FontFactory.GetFont(FontFactory.HELVETICA, 9, new BaseColor(100, 100, 100)))
+                            {
+                                Alignment = Element.ALIGN_CENTER,
+                                SpacingAfter = 20
+                            };
+                            document.Add(imageCaption);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // Fallback if image download fails
+                        var imageHeaderFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12, new BaseColor(0, 123, 255));
+                        var imageHeader = new Paragraph("🖼️ Badge Image", imageHeaderFont)
+                        {
+                            Alignment = Element.ALIGN_CENTER,
+                            SpacingAfter = 5
+                        };
+                        document.Add(imageHeader);
 
-                    var imageNote = new Paragraph($"View the badge image at: {badge.ImageUrl}", FontFactory.GetFont(FontFactory.HELVETICA, 9, new BaseColor(100, 100, 100)))
-                    {
-                        Alignment = Element.ALIGN_CENTER,
-                        SpacingAfter = 20
-                    };
-                    document.Add(imageNote);
+                        var imageNote = new Paragraph($"View the badge image at: {badge.ImageUrl}", FontFactory.GetFont(FontFactory.HELVETICA, 9, new BaseColor(100, 100, 100)))
+                        {
+                            Alignment = Element.ALIGN_CENTER,
+                            SpacingAfter = 20
+                        };
+                        document.Add(imageNote);
+                    }
                 }
                 else
                 {
