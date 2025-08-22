@@ -157,10 +157,11 @@ namespace BadgeManagement.Controllers
                     return NotFound(new { message = "Badge not found" });
                 }
 
-                var htmlBytes = _pdfService.GenerateBadgePNG(badge);
-                var fileName = $"{badge.Name.Replace(" ", "_")}_badge.html";
+                // Generate SVG that can be converted to PNG
+                var svgContent = _pdfService.GenerateBadgeSVG(badge);
+                var fileName = $"{badge.Name.Replace(" ", "_")}_badge.svg";
 
-                return File(htmlBytes, "text/html", fileName);
+                return File(System.Text.Encoding.UTF8.GetBytes(svgContent), "image/svg+xml", fileName);
             }
             catch (Exception ex)
             {
