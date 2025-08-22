@@ -49,3 +49,6 @@
 /home/runner/workspace/backend/obj/Debug/net8.0/BadgeManagement.pdb
 /home/runner/workspace/backend/obj/Debug/net8.0/BadgeManagement.genruntimeconfig.cache
 /home/runner/workspace/backend/obj/Debug/net8.0/ref/BadgeManagement.dll
+/home/runner/workspace/backend/bin/Debug/net8.0/Microsoft.AspNetCore.JsonPatch.dll
+/home/runner/workspace/backend/bin/Debug/net8.0/Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
+/home/runner/workspace/backend/bin/Debug/net8.0/Newtonsoft.Json.Bson.dll
