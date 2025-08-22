@@ -17,7 +17,7 @@ const BadgeCard: React.FC<BadgeCardProps> = ({ badge, onDelete }) => {
     try {
       await downloadUtils.downloadBadgeAsPNG(badge);
     } catch (error) {
-      console.error('Failed to download PNG:', error);
+      console.error('Failed to download badge:', error);
     } finally {
       setLoading(false);
     }
@@ -103,7 +103,7 @@ const BadgeCard: React.FC<BadgeCardProps> = ({ badge, onDelete }) => {
             disabled={loading}
           >
             <i className="fas fa-download me-1"></i>
-            PNG
+            Badge
           </button>
           <button 
             className="btn btn-outline-primary btn-sm"

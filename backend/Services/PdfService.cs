@@ -100,26 +100,37 @@ namespace BadgeManagement.Services
 
         public byte[] GenerateBadgePNG(Badge badge)
         {
-            // For cross-platform compatibility, generate a simple SVG and convert to PNG
-            // This is a simplified implementation - in production you'd want to use SkiaSharp or ImageSharp
-            var svgContent = $@"<svg width=""400"" height=""400"" xmlns=""http://www.w3.org/2000/svg"">
-  <rect x=""10"" y=""10"" width=""380"" height=""380"" fill=""white"" stroke=""#007bff"" stroke-width=""4""/>
-  <circle cx=""200"" cy=""110"" r=""50"" fill=""#007bff""/>
-  <circle cx=""200"" cy=""110"" r=""20"" fill=""white""/>
-  <text x=""200"" y=""200"" text-anchor=""middle"" font-family=""Arial"" font-size=""18"" font-weight=""bold"" fill=""#333"">{badge.Name}</text>
-  <text x=""200"" y=""250"" text-anchor=""middle"" font-family=""Arial"" font-size=""12"" fill=""#666"">{(badge.Description.Length > 50 ? badge.Description.Substring(0, 47) + "..." : badge.Description)}</text>
-  <text x=""200"" y=""320"" text-anchor=""middle"" font-family=""Arial"" font-size=""10"" fill=""#999"">Issued by: {badge.Issuer}</text>
-  <text x=""200"" y=""345"" text-anchor=""middle"" font-family=""Arial"" font-size=""10"" fill=""#999"">Date: {badge.IssuedDate:MM/dd/yyyy}</text>
-</svg>";
-            
-            // For now, return SVG as bytes with PNG header placeholder
-            // In production, you'd convert SVG to PNG using a proper library
-            var pngHeader = new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
-            var svgBytes = System.Text.Encoding.UTF8.GetBytes(svgContent);
-            var result = new byte[pngHeader.Length + svgBytes.Length];
-            Array.Copy(pngHeader, 0, result, 0, pngHeader.Length);
-            Array.Copy(svgBytes, 0, result, pngHeader.Length, svgBytes.Length);
-            return result;
+            // Create a simple HTML page that can be rendered as an image
+            var html = $@"
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {{ margin: 0; padding: 20px; font-family: Arial, sans-serif; background: white; width: 360px; height: 360px; }}
+        .badge {{ border: 4px solid #007bff; padding: 20px; text-align: center; background: white; }}
+        .badge-icon {{ width: 80px; height: 80px; background: #007bff; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; }}
+        .badge-name {{ font-size: 18px; font-weight: bold; color: #333; margin-bottom: 10px; }}
+        .badge-desc {{ font-size: 12px; color: #666; margin-bottom: 15px; line-height: 1.4; }}
+        .badge-issuer {{ font-size: 10px; color: #999; margin-bottom: 5px; }}
+        .badge-date {{ font-size: 10px; color: #999; }}
+        .badge-verified {{ background: #28a745; color: white; padding: 2px 8px; border-radius: 3px; font-size: 8px; margin-top: 10px; display: inline-block; }}
+    </style>
+</head>
+<body>
+    <div class=""badge"">
+        <div class=""badge-icon"">🏆</div>
+        <div class=""badge-name"">{badge.Name}</div>
+        <div class=""badge-desc"">{(badge.Description.Length > 100 ? badge.Description.Substring(0, 97) + "..." : badge.Description)}</div>
+        <div class=""badge-issuer"">Issued by: {badge.Issuer}</div>
+        <div class=""badge-date"">Date: {badge.IssuedDate:MM/dd/yyyy}</div>
+        {(badge.IsVerified ? "<div class=\"badge-verified\">✓ OpenBadges v3.0 Verified</div>" : "")}
+    </div>
+</body>
+</html>";
+
+            // Return the HTML as bytes - browsers can save this as an image
+            // In a production environment, you'd use a library like Puppeteer or wkhtmltopdf to convert HTML to PNG
+            return System.Text.Encoding.UTF8.GetBytes(html);
         }
     }
 }
