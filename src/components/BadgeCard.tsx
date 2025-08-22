@@ -103,7 +103,7 @@ const BadgeCard: React.FC<BadgeCardProps> = ({ badge, onDelete }) => {
             disabled={loading}
           >
             <i className="fas fa-download me-1"></i>
-            Badge
+            SVG
           </button>
           <button 
             className="btn btn-outline-primary btn-sm"

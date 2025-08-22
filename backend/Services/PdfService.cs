@@ -24,6 +24,17 @@ namespace BadgeManagement.Services
                 };
                 document.Add(title);
 
+                // Badge Image (if available)
+                if (!string.IsNullOrEmpty(badge.ImageUrl))
+                {
+                    var imageNote = new Paragraph($"Badge Image: {badge.ImageUrl}", FontFactory.GetFont(FontFactory.HELVETICA, 10, new BaseColor(100, 100, 100)))
+                    {
+                        Alignment = Element.ALIGN_CENTER,
+                        SpacingAfter = 15
+                    };
+                    document.Add(imageNote);
+                }
+
                 // Badge Name
                 var badgeNameFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 20, new BaseColor(0, 123, 255));
                 var badgeName = new Paragraph(badge.Name, badgeNameFont)
@@ -96,6 +107,28 @@ namespace BadgeManagement.Services
                 document.Close();
                 return ms.ToArray();
             }
+        }
+
+        public string GenerateBadgeSVG(Badge badge)
+        {
+            var imageElement = string.IsNullOrEmpty(badge.ImageUrl) 
+                ? "<circle cx=\"200\" cy=\"110\" r=\"50\" fill=\"#007bff\"/><circle cx=\"200\" cy=\"110\" r=\"20\" fill=\"white\"/>"
+                : $"<image href=\"{badge.ImageUrl}\" x=\"150\" y=\"60\" width=\"100\" height=\"100\" clip-path=\"circle(50px at 50px 50px)\"/>";
+
+            return $@"<svg width=""400"" height=""400"" xmlns=""http://www.w3.org/2000/svg"">
+  <defs>
+    <clipPath id=""circleClip"">
+      <circle cx=""50"" cy=""50"" r=""50""/>
+    </clipPath>
+  </defs>
+  <rect x=""10"" y=""10"" width=""380"" height=""380"" fill=""white"" stroke=""#007bff"" stroke-width=""4""/>
+  {imageElement}
+  <text x=""200"" y=""200"" text-anchor=""middle"" font-family=""Arial"" font-size=""18"" font-weight=""bold"" fill=""#333"">{badge.Name}</text>
+  <text x=""200"" y=""250"" text-anchor=""middle"" font-family=""Arial"" font-size=""12"" fill=""#666"">{(badge.Description.Length > 50 ? badge.Description.Substring(0, 47) + "..." : badge.Description)}</text>
+  <text x=""200"" y=""320"" text-anchor=""middle"" font-family=""Arial"" font-size=""10"" fill=""#999"">Issued by: {badge.Issuer}</text>
+  <text x=""200"" y=""345"" text-anchor=""middle"" font-family=""Arial"" font-size=""10"" fill=""#999"">Date: {badge.IssuedDate:MM/dd/yyyy}</text>
+  {(badge.IsVerified ? "<rect x=\"130\" y=\"360\" width=\"140\" height=\"20\" fill=\"#28a745\" rx=\"3\"/><text x=\"200\" y=\"375\" text-anchor=\"middle\" font-family=\"Arial\" font-size=\"8\" fill=\"white\">✓ OpenBadges v3.0 Verified</text>" : "")}
+</svg>";
         }
 
         public byte[] GenerateBadgePNG(Badge badge)
