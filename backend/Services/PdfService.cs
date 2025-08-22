@@ -118,7 +118,10 @@ namespace BadgeManagement.Services
 </head>
 <body>
     <div class=""badge"">
-        <div class=""badge-icon"">🏆</div>
+        {(string.IsNullOrEmpty(badge.ImageUrl) ? 
+            "<div class=\"badge-icon\">🏆</div>" : 
+            $"<img src=\"{badge.ImageUrl}\" alt=\"{badge.Name}\" class=\"badge-icon\" style=\"width: 80px; height: 80px; border-radius: 50%; object-fit: cover;\" />"
+        )}
         <div class=""badge-name"">{badge.Name}</div>
         <div class=""badge-desc"">{(badge.Description.Length > 100 ? badge.Description.Substring(0, 97) + "..." : badge.Description)}</div>
         <div class=""badge-issuer"">Issued by: {badge.Issuer}</div>
