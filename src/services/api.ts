@@ -1,4 +1,6 @@
-const API_BASE_URL = window.location.protocol + '//' + window.location.hostname + ':5001/api';
+const API_BASE_URL = window.location.hostname.includes('replit.dev') 
+  ? `${window.location.protocol}//${window.location.hostname.replace('5000-', '5001-')}/api`
+  : 'http://localhost:5001/api';
 
 class ApiService {
   private getHeaders(): HeadersInit {
