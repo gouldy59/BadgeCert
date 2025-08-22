@@ -157,14 +157,14 @@ namespace BadgeManagement.Controllers
                     return NotFound(new { message = "Badge not found" });
                 }
 
-                var pngBytes = _pdfService.GenerateBadgePNG(badge);
-                var fileName = $"{badge.Name.Replace(" ", "_")}.png";
+                var htmlBytes = _pdfService.GenerateBadgePNG(badge);
+                var fileName = $"{badge.Name.Replace(" ", "_")}_badge.html";
 
-                return File(pngBytes, "image/png", fileName);
+                return File(htmlBytes, "text/html", fileName);
             }
             catch (Exception ex)
             {
-                return BadRequest(new { message = "Failed to generate PNG", error = ex.Message });
+                return BadRequest(new { message = "Failed to generate badge", error = ex.Message });
             }
         }
 
