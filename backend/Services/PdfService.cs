@@ -27,12 +27,29 @@ namespace BadgeManagement.Services
                 // Badge Image (if available)
                 if (!string.IsNullOrEmpty(badge.ImageUrl))
                 {
-                    var imageNote = new Paragraph($"Badge Image: {badge.ImageUrl}", FontFactory.GetFont(FontFactory.HELVETICA, 10, new BaseColor(100, 100, 100)))
+                    var imageHeaderFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12, new BaseColor(0, 123, 255));
+                    var imageHeader = new Paragraph("🖼️ Badge Image", imageHeaderFont)
                     {
                         Alignment = Element.ALIGN_CENTER,
-                        SpacingAfter = 15
+                        SpacingAfter = 5
+                    };
+                    document.Add(imageHeader);
+
+                    var imageNote = new Paragraph($"View the badge image at: {badge.ImageUrl}", FontFactory.GetFont(FontFactory.HELVETICA, 9, new BaseColor(100, 100, 100)))
+                    {
+                        Alignment = Element.ALIGN_CENTER,
+                        SpacingAfter = 20
                     };
                     document.Add(imageNote);
+                }
+                else
+                {
+                    var noImageNote = new Paragraph("🏆 Digital Badge (No image provided)", FontFactory.GetFont(FontFactory.HELVETICA, 10, new BaseColor(100, 100, 100)))
+                    {
+                        Alignment = Element.ALIGN_CENTER,
+                        SpacingAfter = 20
+                    };
+                    document.Add(noImageNote);
                 }
 
                 // Badge Name
@@ -111,16 +128,18 @@ namespace BadgeManagement.Services
 
         public string GenerateBadgeSVG(Badge badge)
         {
+            // Create a self-contained SVG that doesn't rely on external images
             var imageElement = string.IsNullOrEmpty(badge.ImageUrl) 
-                ? "<circle cx=\"200\" cy=\"110\" r=\"50\" fill=\"#007bff\"/><circle cx=\"200\" cy=\"110\" r=\"20\" fill=\"white\"/>"
-                : $"<image href=\"{badge.ImageUrl}\" x=\"150\" y=\"60\" width=\"100\" height=\"100\" clip-path=\"circle(50px at 50px 50px)\"/>";
+                ? @"<circle cx=""200"" cy=""110"" r=""50"" fill=""#007bff""/>
+                   <circle cx=""200"" cy=""110"" r=""20"" fill=""white""/>
+                   <text x=""200"" y=""120"" text-anchor=""middle"" font-family=""Arial"" font-size=""24"" fill=""white"">🏆</text>"
+                : $@"<circle cx=""200"" cy=""110"" r=""50"" fill=""#007bff""/>
+                    <circle cx=""200"" cy=""110"" r=""45"" fill=""white""/>
+                    <text x=""200"" y=""90"" text-anchor=""middle"" font-family=""Arial"" font-size=""8"" fill=""#333"">Badge Image:</text>
+                    <text x=""200"" y=""120"" text-anchor=""middle"" font-family=""Arial"" font-size=""24"" fill=""#007bff"">🖼️</text>
+                    <text x=""200"" y=""135"" text-anchor=""middle"" font-family=""Arial"" font-size=""7"" fill=""#666"">View: {badge.ImageUrl.Substring(badge.ImageUrl.LastIndexOf('/') + 1)}</text>";
 
             return $@"<svg width=""400"" height=""400"" xmlns=""http://www.w3.org/2000/svg"">
-  <defs>
-    <clipPath id=""circleClip"">
-      <circle cx=""50"" cy=""50"" r=""50""/>
-    </clipPath>
-  </defs>
   <rect x=""10"" y=""10"" width=""380"" height=""380"" fill=""white"" stroke=""#007bff"" stroke-width=""4""/>
   {imageElement}
   <text x=""200"" y=""200"" text-anchor=""middle"" font-family=""Arial"" font-size=""18"" font-weight=""bold"" fill=""#333"">{badge.Name}</text>
