@@ -1,0 +1,11 @@
+
+# Visual Studio 2015/2017 cache/options directory
+.vs
+new-app/build
+node_modules/
+
+
+
+node_modules/
+
+
