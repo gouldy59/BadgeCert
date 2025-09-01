@@ -4,8 +4,8 @@
 new-app/build
 node_modules/
 
-
-
+backend/bin
+backend/obj
 node_modules/
 
 
