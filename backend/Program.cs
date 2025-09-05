@@ -24,6 +24,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Add custom services
 builder.Services.AddScoped<BadgeValidationService>();
 builder.Services.AddScoped<PdfService>();
+builder.Services.AddScoped<BlockcertsService>();
 
 // Add JWT Authentication
 var jwtKey = builder.Configuration["Jwt:Key"] ?? "your-super-secret-key-that-is-at-least-32-characters-long";

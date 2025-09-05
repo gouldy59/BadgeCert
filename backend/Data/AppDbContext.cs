@@ -12,6 +12,7 @@ namespace BadgeManagement.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Badge> Badges { get; set; }
         public DbSet<Result> Results { get; set; }
+        public DbSet<BlockcertsCertificate> BlockcertsCertificates { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -59,6 +60,22 @@ namespace BadgeManagement.Data
                       .WithMany()
                       .HasForeignKey(e => e.BadgeId)
                       .OnDelete(DeleteBehavior.SetNull);
+            });
+
+            // Configure BlockcertsCertificate entity
+            modelBuilder.Entity<BlockcertsCertificate>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Name).IsRequired().HasMaxLength(255);
+                entity.Property(e => e.Description).IsRequired().HasMaxLength(1000);
+                entity.Property(e => e.IssuerName).IsRequired().HasMaxLength(255);
+                entity.Property(e => e.RecipientId).IsRequired().HasMaxLength(255);
+                entity.Property(e => e.CredentialJson).IsRequired();
+                
+                entity.HasOne(e => e.User)
+                      .WithMany(u => u.BlockcertsCertificates)
+                      .HasForeignKey(e => e.UserId)
+                      .OnDelete(DeleteBehavior.Cascade);
             });
         }
     }
