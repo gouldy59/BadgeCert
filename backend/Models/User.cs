@@ -21,5 +21,7 @@ namespace BadgeManagement.Models
         public List<Badge> Badges { get; set; } = new();
         
         public List<Result> Results { get; set; } = new();
+        
+        public List<BlockcertsCertificate> BlockcertsCertificates { get; set; } = new();
     }
 }
