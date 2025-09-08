@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace BadgeManagement.Models
+namespace ProResults.Models
 {
     public class User
     {

@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace BadgeManagement.Models
+namespace ProResults.Models
 {
     public class OpenBadgeCredential
     {

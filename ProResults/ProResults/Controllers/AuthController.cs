@@ -4,11 +4,11 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using BadgeManagement.Data;
-using BadgeManagement.Models;
+using ProResults.Data;
+using ProResults.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace BadgeManagement.Controllers
+namespace ProResults.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

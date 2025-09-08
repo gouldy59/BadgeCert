@@ -2,11 +2,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using BadgeManagement.Data;
-using BadgeManagement.Services;
-
+using Microsoft.Extensions.FileProviders;
+using ProResults.Data;
+using ProResults.Services;
+// Ensure the required package is installed: Microsoft.AspNetCore.Mvc.NewtonsoftJson
+// Add the following using directive at the top of the file:
 var builder = WebApplication.CreateBuilder(args);
-
 // Add services to the container.
 builder.Services.AddControllers()
     .AddNewtonsoftJson(options =>
@@ -73,17 +74,19 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.UseStaticFiles();
+
 
 // Seed data
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     context.Database.EnsureCreated();
-    
+
     // Add sample user if not exists
     if (!context.Users.Any())
     {
-        context.Users.Add(new BadgeManagement.Models.User
+        context.Users.Add(new ProResults.Models.User
         {
             Id = Guid.NewGuid(),
             Email = "user@example.com",

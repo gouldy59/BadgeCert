@@ -2,12 +2,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using BadgeManagement.Data;
-using BadgeManagement.Models;
-using BadgeManagement.Services;
+using ProResults.Data;
+using ProResults.Models;
+using ProResults.Services;
 using Newtonsoft.Json;
 
-namespace BadgeManagement.Controllers
+namespace ProResults.Controllers
 {
     [ApiController]
     [Route("api/[controller]s")]

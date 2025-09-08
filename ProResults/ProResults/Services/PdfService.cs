@@ -1,9 +1,9 @@
-using BadgeManagement.Models;
+using ProResults.Models;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using System.Net.Http;
 
-namespace BadgeManagement.Services
+namespace ProResults.Services
 {
     public class PdfService
     {

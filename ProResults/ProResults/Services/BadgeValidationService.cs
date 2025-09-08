@@ -1,7 +1,7 @@
-using BadgeManagement.Models;
+using ProResults.Models;
 using Newtonsoft.Json;
 
-namespace BadgeManagement.Services
+namespace ProResults.Services
 {
     public class BadgeValidationService
     {

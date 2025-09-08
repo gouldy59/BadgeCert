@@ -6,6 +6,9 @@ node_modules/
 
 backend/bin
 backend/obj
+ProResults/ProResults/bin
+ProResults/ProResults/obj
+ProResults/ProResults/ProResults.csproj.user
 node_modules/
 
 

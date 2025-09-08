@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using BadgeManagement.Models;
+using ProResults.Models;
 
-namespace BadgeManagement.Data
+namespace ProResults.Data
 {
     public class AppDbContext : DbContext
     {
