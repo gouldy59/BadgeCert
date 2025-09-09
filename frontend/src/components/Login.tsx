@@ -33,7 +33,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
         <div className="card-body p-4">
           <div className="text-center mb-4">
             <i className="fas fa-medal text-primary" style={{ fontSize: '3rem' }}></i>
-            <h2 className="mt-3 mb-0">Badge Management</h2>
+            <h2 className="mt-3 mb-0">My Result Portal</h2>
             <p className="text-muted">Sign in to your account</p>
           </div>
 

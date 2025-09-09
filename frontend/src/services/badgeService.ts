@@ -1,5 +1,6 @@
 import { apiService } from './api';
-import { Badge, Result } from '../types/badge';
+import { Badge } from '../types/badge';
+import { ScoreReport } from '../types/scoreReport';
 
 class BadgeService {
   async getBadges(): Promise<Badge[]> {
@@ -14,11 +15,13 @@ class BadgeService {
     return apiService.deleteBadge(badgeId);
   }
 
-  async getResults(): Promise<Result[]> {
-    return apiService.getResults();
+  async getScoreReports(): Promise<ScoreReport[]> {
+    return apiService.getScoreReports();
   }
 
   validateOpenBadgeV3(badgeData: any): { isValid: boolean; errors: string[] } {
+
+    debugger;
     const errors: string[] = [];
 
     // Check @context

@@ -2,6 +2,11 @@
 
 namespace ProCertifier.Models
 {
+    public class BadgeRequest
+    {
+        [JsonPropertyName("badgeCredential")]
+        public OpenBadgeCredentialWithProof BadgeCredential { get; set; }
+    }
     public class OpenBadgeCredentialWithProof
     {
         [JsonPropertyName("@context")]

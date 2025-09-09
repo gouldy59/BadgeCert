@@ -85,7 +85,7 @@ namespace ProResults.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateBadge([FromBody] OpenBadgeCredentialWithProof badgeCredential)
+        public async Task<IActionResult> CreateBadge([FromBody] BadgeRequest BadgeCredential)
         {
             try
             {
@@ -93,27 +93,28 @@ namespace ProResults.Controllers
                 if (userId == null) return Unauthorized();
 
                 // Validate OpenBadges v3.0 compliance
-                var validationResult = _validationService.ValidateOpenBadgeV3(badgeCredential);
+                var validationResult = _validationService.ValidateOpenBadgeV3(BadgeCredential.BadgeCredential);
                 if (!validationResult.IsValid)
                 {
-                    return BadRequest(new { 
-                        message = "Badge validation failed", 
-                        errors = validationResult.Errors 
+                    return BadRequest(new
+                    {
+                        message = "Badge validation failed",
+                        errors = validationResult.Errors
                     });
                 }
 
                 var badge = new Badge
                 {
                     Id = Guid.NewGuid(),
-                    Name = badgeCredential.CredentialSubject.Achievement.Name,
-                    Description = badgeCredential.CredentialSubject.Achievement.Description,
-                    Issuer = badgeCredential.Issuer.Name,
-                    IssuedDate = DateTime.Parse(badgeCredential.ValidFrom),
-                    ExpirationDate = !string.IsNullOrEmpty(badgeCredential.ValidUntil) 
-                        ? DateTime.Parse(badgeCredential.ValidUntil) 
+                    Name = BadgeCredential.BadgeCredential.CredentialSubject.Achievement.Name,
+                    Description = BadgeCredential.BadgeCredential.CredentialSubject.Achievement.Description,
+                    Issuer = BadgeCredential.BadgeCredential.Issuer.Name,
+                    IssuedDate = DateTime.Parse(BadgeCredential.BadgeCredential.ValidFrom),
+                    ExpirationDate = !string.IsNullOrEmpty(BadgeCredential.BadgeCredential.ValidUntil)
+                        ? DateTime.Parse(BadgeCredential.BadgeCredential.ValidUntil)
                         : null,
-                    ImageUrl = badgeCredential.CredentialSubject.Achievement.Image?.Id,
-                    CredentialJson = JsonConvert.SerializeObject(badgeCredential, Formatting.Indented),
+                    ImageUrl = BadgeCredential.BadgeCredential.CredentialSubject.Achievement.Image?.Id,
+                    CredentialJson = JsonConvert.SerializeObject(BadgeCredential, Formatting.Indented),
                     IsVerified = validationResult.IsValid,
                     UserId = userId.Value
                 };
@@ -221,6 +222,42 @@ namespace ProResults.Controllers
                 return BadRequest(new { message = "Failed to generate PDF", error = ex.Message });
             }
         }
+
+
+        [HttpGet("{id}/verify")]
+        public async Task<IActionResult> VerifyBadge(Guid id)
+        {
+            try
+            {
+                var userId = GetCurrentUserId();
+                if (userId == null) return Unauthorized();
+
+                var url = $"https://localhost:7184/credentials/{id}";
+                var response = await _httpClient.GetAsync(url);
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    var stringContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+
+                    var response2 = await _httpClient.PostAsync("https://localhost:7184/credentials/verify-badge", stringContent);
+                    var json2 = await response2.Content.ReadAsStringAsync();
+                    var result = JsonConvert.DeserializeObject<VerifyResponse>(json2);
+
+                    return Ok(result.Valid);
+                }
+
+                return Ok(false);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = "Failed to generate PDF", error = ex.Message });
+            }
+        }
+        public class VerifyResponse
+        {
+            public bool Valid { get; set; }
+        }
+
 
         private Guid? GetCurrentUserId()
         {

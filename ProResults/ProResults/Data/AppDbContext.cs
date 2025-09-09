@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using ProResults.Controllers;
 using ProResults.Models;
 
 namespace ProResults.Data
@@ -11,7 +12,7 @@ namespace ProResults.Data
 
         public DbSet<User> Users { get; set; }
         public DbSet<Badge> Badges { get; set; }
-        public DbSet<Result> Results { get; set; }
+        public DbSet<ScoreReport> ScoreReports { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -43,22 +44,13 @@ namespace ProResults.Data
             });
 
             // Configure Result entity
-            modelBuilder.Entity<Result>(entity =>
+            modelBuilder.Entity<ScoreReport>(entity =>
             {
                 entity.HasKey(e => e.Id);
-                entity.Property(e => e.Title).IsRequired().HasMaxLength(255);
-                entity.Property(e => e.Description).IsRequired().HasMaxLength(1000);
-                entity.Property(e => e.Status).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.Title).HasMaxLength(255);
+                entity.Property(e => e.Description).HasMaxLength(1000);
+                entity.Property(e => e.Status).HasMaxLength(50);
                 
-                entity.HasOne(e => e.User)
-                      .WithMany(u => u.Results)
-                      .HasForeignKey(e => e.UserId)
-                      .OnDelete(DeleteBehavior.Cascade);
-                      
-                entity.HasOne(e => e.Badge)
-                      .WithMany()
-                      .HasForeignKey(e => e.BadgeId)
-                      .OnDelete(DeleteBehavior.SetNull);
             });
         }
     }

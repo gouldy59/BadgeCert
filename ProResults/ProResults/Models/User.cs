@@ -20,6 +20,6 @@ namespace ProResults.Models
         
         public List<Badge> Badges { get; set; } = new();
         
-        public List<Result> Results { get; set; } = new();
+        public List<ScoreReport> ScoreReports { get; set; } = new();
     }
 }

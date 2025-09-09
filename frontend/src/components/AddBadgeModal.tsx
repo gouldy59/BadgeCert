@@ -22,24 +22,24 @@ const AddBadgeModal: React.FC<AddBadgeModalProps> = ({ show, onClose, onAdd }) =
       const badgeData = JSON.parse(badgeJson);
       
       // Basic OpenBadges v3.0 validation
-      if (!badgeData['@context'] || !Array.isArray(badgeData['@context'])) {
-        throw new Error('Badge must include @context array');
-      }
+      // if (!badgeData['@context'] || !Array.isArray(badgeData['@context'])) {
+      //   throw new Error('Badge must include @context array');
+      // }
       
-      if (!badgeData['@context'].includes('https://www.w3.org/ns/credentials/v2') ||
-          !badgeData['@context'].includes('https://purl.imsglobal.org/spec/ob/v3p0/context-3.0.3.json')) {
-        throw new Error('Badge must include required OpenBadges v3.0 context URLs');
-      }
+      // if (!badgeData['@context'].includes('https://www.w3.org/ns/credentials/v2') ||
+      //     !badgeData['@context'].includes('https://purl.imsglobal.org/spec/ob/v3p0/context-3.0.3.json')) {
+      //   throw new Error('Badge must include required OpenBadges v3.0 context URLs');
+      // }
       
-      if (!badgeData.type || !Array.isArray(badgeData.type) ||
-          !badgeData.type.includes('VerifiableCredential') ||
-          !badgeData.type.includes('OpenBadgeCredential')) {
-        throw new Error('Badge must include type array with VerifiableCredential and OpenBadgeCredential');
-      }
+      // if (!badgeData.type || !Array.isArray(badgeData.type) ||
+      //     !badgeData.type.includes('VerifiableCredential') ||
+      //     !badgeData.type.includes('OpenBadgeCredential')) {
+      //   throw new Error('Badge must include type array with VerifiableCredential and OpenBadgeCredential');
+      // }
       
-      if (!badgeData.issuer || !badgeData.credentialSubject || !badgeData.validFrom) {
-        throw new Error('Badge must include issuer, credentialSubject, and validFrom properties');
-      }
+      // if (!badgeData.issuer || !badgeData.credentialSubject || !badgeData.validFrom) {
+      //   throw new Error('Badge must include issuer, credentialSubject, and validFrom properties');
+      // }
 
       await onAdd(badgeData);
       setBadgeJson('');

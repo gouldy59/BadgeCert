@@ -10,16 +10,6 @@ export interface Badge {
   isVerified: boolean;
 }
 
-export interface Result {
-  id: string;
-  title: string;
-  description: string;
-  status: 'completed' | 'in-progress' | 'pending';
-  achievedDate: string;
-  score?: number;
-  badgeId?: string;
-}
-
 export interface OpenBadgeCredential {
   '@context': string[];
   type: string[];
@@ -33,10 +23,10 @@ export interface OpenBadgeCredential {
   validUntil?: string;
   credentialSubject: {
     id: string;
-    type: string;
+    type: string[];
     achievement: {
       id: string;
-      type: string;
+      type: string[];
       name: string;
       description: string;
       criteria: {
@@ -56,6 +46,8 @@ export interface OpenBadgeCredential {
     proofValue: string;
   };
 }
+
+
 
 export interface LoginResponse {
   token: string;

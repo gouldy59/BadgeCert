@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import BadgeCard from './BadgeCard';
 import AddBadgeModal from './AddBadgeModal';
-import { Badge, Result } from '../types/badge';
+import { Badge } from '../types/badge';
+import { ScoreReport } from '../types/scoreReport';
 import { badgeService } from '../services/badgeService';
 
 interface DashboardProps {
@@ -11,11 +12,11 @@ interface DashboardProps {
 
 const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
   const [badges, setBadges] = useState<Badge[]>([]);
-  const [results, setResults] = useState<Result[]>([]);
+  const [scoreReports, setScoreReports] = useState<ScoreReport[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
   const [error, setError] = useState('');
-  const [activeTab, setActiveTab] = useState<'badges' | 'results'>('badges');
+  const [activeTab, setActiveTab] = useState<'badges' | 'scoreReports' | 'My Certificates'>('badges');
 
   useEffect(() => {
     loadData();
@@ -25,13 +26,13 @@ const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
     try {
       debugger;
       setLoading(true);
-      const [badgesData, resultsData] = await Promise.all([
+      const [badgesData, scoreReportData] = await Promise.all([
         badgeService.getBadges(),
-        badgeService.getResults()
+        badgeService.getScoreReports()
       ]);
       debugger;
       setBadges(badgesData);
-      setResults(resultsData);
+      setScoreReports(scoreReportData);
     } catch (error: any) {
       setError('Failed to load data: ' + error.message);
     } finally {
@@ -48,6 +49,82 @@ const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
       setError('Failed to add badge: ' + error.message);
     }
   };
+  const handleDownloadImage = async (scoreReportId: string) => {
+    setLoading(true);
+    try {
+          const response = await fetch(`http://localhost:5002/api/ScoreReports/image/${scoreReportId}`);
+          if (!response.ok) {
+            // handle error
+            return;
+          }
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = 'ScoreReport.png'; // or use dynamic name
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Failed to download image:', error);
+    } finally {
+      setLoading(false);
+    }
+  };  const handleDownloadPdf = async (scoreReportId: string)  => {
+      setLoading(true);
+      try {
+          const response = await fetch(`http://localhost:5002/api/ScoreReports/pdf/${scoreReportId}`);
+          if (!response.ok) {
+            // handle error
+            return;
+          }
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = 'ScoreReport.pdf'; // or use dynamic name
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          window.URL.revokeObjectURL(url);
+      } catch (error) {
+        console.error('Failed to download pdf:', error);
+      } finally {
+        setLoading(false);
+      }
+    };  
+
+
+    const handleDisplayHtml = async (scoreReportId: string)  => {
+        setLoading(true);
+        try {
+           const response = await fetch(`http://localhost:5002/api/ScoreReports/html/${scoreReportId}`);
+            if (!response.ok) {
+              alert('Failed to fetch HTML');
+              return;
+            }
+            const htmlText = await response.text();
+
+            // Open a new window and write the HTML into it
+            const win = window.open('', '_blank');
+            if (win) {
+
+            win.document.open();
+            win.document.write(htmlText);
+            win.document.close();
+            }
+            else
+            {
+                alert("Could not open new window. Please allow popups for this site.");
+            }
+        } catch (error) {
+          console.error('Failed to download badge:', error);
+        } finally {
+          setLoading(false);
+        }
+      };
+
 
   const handleDeleteBadge = async (badgeId: string) => {
     try {
@@ -75,7 +152,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
         <div className="container">
           <span className="navbar-brand">
             <i className="fas fa-medal me-2"></i>
-            Badge Management
+           My Result Portal
           </span>
           
           <div className="navbar-nav ms-auto">
@@ -119,13 +196,23 @@ const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
           </li>
           <li className="nav-item">
             <button 
-              className={`nav-link ${activeTab === 'results' ? 'active' : ''}`}
-              onClick={() => setActiveTab('results')}
+              className={`nav-link ${activeTab === 'scoreReports' ? 'active' : ''}`}
+              onClick={() => setActiveTab('scoreReports')}
             >
               <i className="fas fa-chart-bar me-2"></i>
-              My Results ({results.length})
+              My Score Reports ({scoreReports.length})
             </button>
           </li>
+    <li className="nav-item">
+            <button 
+              className={`nav-link ${activeTab === 'My Certificates' ? 'active' : ''}`}
+              onClick={() => setActiveTab('My Certificates')}
+            >
+              <i className="fas fa-chart-bar me-2"></i>
+              My Certificates (0)
+            </button>
+          </li>
+
         </ul>
 
         {/* Badges Tab */}
@@ -170,36 +257,70 @@ const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
         )}
 
         {/* Results Tab */}
-        {activeTab === 'results' && (
+        {activeTab === 'scoreReports' && (
           <div>
-            <h3 className="mb-4">My Results</h3>
+            <h3 className="mb-4">My Score Reports</h3>
             
-            {results.length === 0 ? (
+            {scoreReports.length === 0 ? (
               <div className="text-center py-5">
                 <i className="fas fa-chart-bar text-muted" style={{ fontSize: '4rem' }}></i>
-                <h4 className="mt-3 text-muted">No results yet</h4>
-                <p className="text-muted">Your achievement results will appear here</p>
+                <h4 className="mt-3 text-muted">No Score Reports yet</h4>
+                <p className="text-muted">Your Score Reports will appear here</p>
               </div>
             ) : (
               <div className="row">
-                {results.map(result => (
-                  <div key={result.id} className="col-md-6 mb-3">
-                    <div className="card">
+                {scoreReports.map(ScoreReport => (
+                  <div key={ScoreReport.id} className="col-md-6 mb-3">
+                    <div className="card h-100">
                       <div className="card-body">
-                        <h5 className="card-title">{result.title}</h5>
-                        <p className="card-text">{result.description}</p>
-                        <div className="d-flex justify-content-between align-items-center">
-                          <span className={`badge ${result.status === 'completed' ? 'bg-success' : 'bg-warning'}`}>
-                            {result.status}
-                          </span>
-                          <small className="text-muted">
-                            {new Date(result.achievedDate).toLocaleDateString()}
-                          </small>
+                        <h5 className="card-title text-center">{ScoreReport.title}</h5>
+                        <p className="card-text text-muted small">{ScoreReport.description}</p>
+                            <div className="text-center mb-3">
+                            <span className="badge bg-info me-2">
+                              <i className="fas fa-calendar me-1"></i>
+                                {new Date(ScoreReport.achievedDate).toLocaleDateString()}
+                            </span>
+                          </div>
                         </div>
+                      
+                      <div className="btn-group w-100 mb-2" role="group">
+                        <button 
+                        className="btn btn-outline-primary btn-sm"
+                        onClick={() => handleDownloadImage(ScoreReport.id)}
+                        disabled={loading}
+                      > <i className="fas fa-download me-1"></i>Image</button>
+                       <button 
+                        className="btn btn-outline-primary btn-sm"
+                        onClick={() => handleDownloadPdf(ScoreReport.id)}
+                        disabled={loading}
+                      > <i className="fas fa-file-pdf me-1"></i>Pdf</button>
+                       <button 
+                        className="btn btn-outline-primary btn-sm"
+                        onClick={() => handleDisplayHtml(ScoreReport.id)}
+                        disabled={loading}
+                      > <i className="fas fa-code me-1"></i>Display Html</button>
                       </div>
-                    </div>
-                  </div>
+                    </div></div>
+                  
                 ))}
+              </div>
+            )}
+          </div>
+        )}
+        {/* Results Tab */}
+        {activeTab === 'My Certificates' && (
+          <div>
+            <h3 className="mb-4">My Certificates</h3>
+            
+            {0 === 0 ? (
+              <div className="text-center py-5">
+                <i className="fas fa-chart-bar text-muted" style={{ fontSize: '4rem' }}></i>
+                <h4 className="mt-3 text-muted">No Certificates yet</h4>
+                <p className="text-muted">Certifacts will issued sing a Public CA-issued certificate</p>
+              </div>
+            ) : (
+              <div className="row">
+               
               </div>
             )}
           </div>

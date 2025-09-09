@@ -2,6 +2,11 @@ using Newtonsoft.Json;
 
 namespace ProResults.Models
 {
+    public class BadgeRequest
+    {
+        [JsonProperty("BadgeCredential")]
+        public OpenBadgeCredentialWithProof BadgeCredential { get; set; }
+    }
     public class OpenBadgeCredentialWithProof
     {
         [JsonProperty("@context")]

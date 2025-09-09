@@ -11,6 +11,7 @@ interface BadgeCardProps {
 const BadgeCard: React.FC<BadgeCardProps> = ({ badge, onDelete }) => {
   const [loading, setLoading] = useState(false);
   const [sharing, setSharing] = useState(false);
+  const [verifyResult, setVerifyResult] = useState<true | false | null>(null); // null | true | false
 
   const handleDownloadPNG = async () => {
     setLoading(true);
@@ -22,10 +23,27 @@ const BadgeCard: React.FC<BadgeCardProps> = ({ badge, onDelete }) => {
       setLoading(false);
     }
   };
+ const verifyBadge = async () => {
+    setLoading(true);
+    setVerifyResult(null); // Reset previous result
+
+    try {
+      debugger;
+      const result = await downloadUtils.VerifyBadge(badge);
+      setVerifyResult(result);
+
+    } catch (error) {
+      console.error('Failed to verify badge:', error);
+      setVerifyResult(false);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleDownloadPDF = async () => {
     setLoading(true);
     try {
+      debugger;
       await downloadUtils.downloadBadgeAsPDF(badge);
     } catch (error) {
       console.error('Failed to download PDF:', error);
@@ -97,21 +115,29 @@ const BadgeCard: React.FC<BadgeCardProps> = ({ badge, onDelete }) => {
         </div>
 
         <div className="btn-group w-100 mb-2" role="group">
-          <button 
+          {/* <button 
             className="btn btn-outline-primary btn-sm"
             onClick={handleDownloadPNG}
             disabled={loading}
           >
             <i className="fas fa-download me-1"></i>
             SVG
-          </button>
+          </button> */}
           <button 
             className="btn btn-outline-primary btn-sm"
-            onClick={handleDownloadPDF}
+            onClick={verifyBadge}
             disabled={loading}
           >
-            <i className="fas fa-file-pdf me-1"></i>
-            PDF
+                   {verifyResult === null && (
+          <i className="fas fa-question me-1"></i>
+        )}
+        {verifyResult === true && (
+          <i className="fas fa-check text-success me-1"></i>
+        )}
+        {verifyResult === false && (
+          <i className="fas fa-times text-danger me-1"></i>
+        )}
+            Verify
           </button>
         </div>
 

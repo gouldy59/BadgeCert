@@ -1,6 +1,4 @@
-const API_BASE_URL = window.location.hostname.includes('replit.dev') 
-  ? `${window.location.protocol}//${window.location.hostname.replace('5000-', '5001-')}/api`
-  : 'http://localhost:5001/api';
+const API_BASE_URL = 'http://localhost:5002/api';
 
 class ApiService {
   private getHeaders(): HeadersInit {
@@ -61,8 +59,29 @@ class ApiService {
     });
   }
 
-  async getResults(): Promise<any[]> {
-    return this.request<any[]>('/results');
+  async getScoreReports(): Promise<any[]> {
+    return this.request<any[]>('/scoreReports');
+  }
+
+  async verifyBadge(badgeId: string): Promise<boolean> {
+    const response = await fetch(`${API_BASE_URL}/badges/${badgeId}/verify`, {
+      headers: this.getHeaders()
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to download PNG');
+    }
+    debugger;
+   
+    const data = await response.json();
+
+    // If backend returns { valid: true }
+    if (typeof data === "object" && "valid" in data) {
+      return data.valid as boolean;
+    }
+
+    // If backend returns true/false directly
+    return Boolean(data);
   }
 
   async downloadBadgePng(badgeId: string): Promise<Blob> {
