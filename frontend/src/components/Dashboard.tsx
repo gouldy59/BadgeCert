@@ -23,11 +23,13 @@ const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
 
   const loadData = async () => {
     try {
+      debugger;
       setLoading(true);
       const [badgesData, resultsData] = await Promise.all([
         badgeService.getBadges(),
         badgeService.getResults()
       ]);
+      debugger;
       setBadges(badgesData);
       setResults(resultsData);
     } catch (error: any) {

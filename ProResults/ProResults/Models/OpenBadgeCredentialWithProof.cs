@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 
 namespace ProResults.Models
 {
-    public class OpenBadgeCredential
+    public class OpenBadgeCredentialWithProof
     {
         [JsonProperty("@context")]
         public string[] Context { get; set; } = Array.Empty<string>();
@@ -47,7 +47,7 @@ namespace ProResults.Models
         public string Id { get; set; } = string.Empty;
         
         [JsonProperty("type")]
-        public string Type { get; set; } = string.Empty;
+        public List<string> Type { get; set; } 
         
         [JsonProperty("achievement")]
         public Achievement Achievement { get; set; } = new();
@@ -59,7 +59,7 @@ namespace ProResults.Models
         public string Id { get; set; } = string.Empty;
         
         [JsonProperty("type")]
-        public string Type { get; set; } = string.Empty;
+        public List<string> Type { get; set; }
         
         [JsonProperty("name")]
         public string Name { get; set; } = string.Empty;

@@ -15,7 +15,7 @@ namespace ProResults.Services
             "OpenBadgeCredential"
         };
 
-        public ValidationResult ValidateOpenBadgeV3(OpenBadgeCredential credential)
+        public ValidationResult ValidateOpenBadgeV3(OpenBadgeCredentialWithProof credential)
         {
             var errors = new List<string>();
 
@@ -103,10 +103,10 @@ namespace ProResults.Services
                     {
                         errors.Add("Missing credentialSubject id");
                     }
-                    if (string.IsNullOrEmpty(credential.CredentialSubject.Type))
-                    {
-                        errors.Add("Missing credentialSubject type");
-                    }
+                    //if (string.IsNullOrEmpty(credential.CredentialSubject.Type))
+                    //{
+                    //    errors.Add("Missing credentialSubject type");
+                    //}
 
                     // Validate achievement
                     if (credential.CredentialSubject.Achievement == null)
@@ -120,10 +120,10 @@ namespace ProResults.Services
                         {
                             errors.Add("Missing achievement id");
                         }
-                        if (string.IsNullOrEmpty(achievement.Type))
-                        {
-                            errors.Add("Missing achievement type");
-                        }
+                        //if (string.IsNullOrEmpty(achievement.Type))
+                        //{
+                        //    errors.Add("Missing achievement type");
+                        //}
                         if (string.IsNullOrEmpty(achievement.Name))
                         {
                             errors.Add("Missing achievement name");
@@ -164,7 +164,7 @@ namespace ProResults.Services
             };
         }
 
-        private void ValidateCredentialStructure(OpenBadgeCredential credential, List<string> errors)
+        private void ValidateCredentialStructure(OpenBadgeCredentialWithProof credential, List<string> errors)
         {
             // Check for recommended fields
             if (credential.Proof == null)
@@ -198,7 +198,7 @@ namespace ProResults.Services
                    (result.Scheme == Uri.UriSchemeHttp || result.Scheme == Uri.UriSchemeHttps);
         }
 
-        public bool VerifyCredentialSignature(OpenBadgeCredential credential)
+        public bool VerifyCredentialSignature(OpenBadgeCredentialWithProof credential)
         {
             // In a production environment, this would:
             // 1. Extract the proof from the credential

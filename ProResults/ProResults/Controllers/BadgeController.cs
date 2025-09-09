@@ -6,6 +6,8 @@ using ProResults.Data;
 using ProResults.Models;
 using ProResults.Services;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Schema;
+using System.Text.Json;
 
 namespace ProResults.Controllers
 {
@@ -17,12 +19,13 @@ namespace ProResults.Controllers
         private readonly AppDbContext _context;
         private readonly BadgeValidationService _validationService;
         private readonly PdfService _pdfService;
-
+        private readonly HttpClient _httpClient;
         public BadgeController(AppDbContext context, BadgeValidationService validationService, PdfService pdfService)
         {
             _context = context;
             _validationService = validationService;
             _pdfService = pdfService;
+            _httpClient = new HttpClient();
         }
 
         [HttpGet]
@@ -30,27 +33,50 @@ namespace ProResults.Controllers
         {
             try
             {
-                var userId = GetCurrentUserId();
+                var userId = GetCurrentUserEmail();
                 if (userId == null) return Unauthorized();
 
-                var badges = await _context.Badges
-                    .Where(b => b.UserId == userId)
-                    .OrderByDescending(b => b.CreatedAt)
-                    .Select(b => new
-                    {
-                        id = b.Id,
-                        name = b.Name,
-                        description = b.Description,
-                        issuer = b.Issuer,
-                        issuedDate = b.IssuedDate,
-                        expirationDate = b.ExpirationDate,
-                        imageUrl = b.ImageUrl,
-                        isVerified = b.IsVerified,
-                        credentialJson = b.CredentialJson
-                    })
-                    .ToListAsync();
+                var url = $"https://localhost:7184/credentials/byUserId/{userId}";
+                var response = await _httpClient.GetAsync(url);
+                if (response.IsSuccessStatusCode)
+                {
+                    // Read and return the JSON credential as a string
+                    var json = await response.Content.ReadAsStringAsync();
 
-                return Ok(badges);
+                      var credentials = JsonConvert.DeserializeObject<List<OpenBadgeCredentialWithProof>>(json);
+                      var badges = credentials.Select(c => new
+                      {
+                          id = c.Id,
+                          name = c.CredentialSubject.Achievement.Name,
+                          description = c.CredentialSubject.Achievement.Description,
+                          issuer = c.Issuer.Name,
+                          issuedDate = c.ValidFrom,
+                          expirationDate = c.ValidFrom, // maybe should be c.ExpirationDate if available?
+                          imageUrl = c.CredentialSubject.Achievement.Image?.Id,
+                          credentialJson = json,
+                          isVerified = true
+                      }).ToList();
+                    return Ok(badges);
+
+//var badges = await _context.Badges
+//                    .Where(b => b.UserId == userId)
+//                    .OrderByDescending(b => b.CreatedAt)
+//                    .Select(b => new
+//                    {
+//                        id = b.Id,
+//                        name = b.Name,
+//                        description = b.Description,
+//                        issuer = b.Issuer,
+//                        issuedDate = b.IssuedDate,
+//                        expirationDate = b.ExpirationDate,
+//                        imageUrl = b.ImageUrl,
+//                        isVerified = b.IsVerified,
+//                        credentialJson = b.CredentialJson
+//                    })
+//                    .ToListAsync();
+                }
+
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -59,7 +85,7 @@ namespace ProResults.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateBadge([FromBody] OpenBadgeCredential badgeCredential)
+        public async Task<IActionResult> CreateBadge([FromBody] OpenBadgeCredentialWithProof badgeCredential)
         {
             try
             {
@@ -200,6 +226,13 @@ namespace ProResults.Controllers
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             return Guid.TryParse(userIdClaim, out var userId) ? userId : null;
+        }
+
+
+        private string GetCurrentUserEmail()
+        {
+            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+            return userEmail;
         }
     }
 }

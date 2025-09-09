@@ -1,0 +1,680 @@
+{
+  "$schema" : "https://json-schema.org/draft/2019-09/schema#",
+  "$id" : "https://purl.imsglobal.org/spec/ob/v3p0/schema/json-ld/ob_v3p0_profile_schema.json",
+  "title" : "JSON Schema for the Profile class.",
+  "description" : "A Profile is a collection of information that describes the entity or organization using Open Badges. Issuers must be represented as Profiles, and endorsers, or other entities may also be represented using this vocabulary. Each Profile that represents an Issuer may be referenced in many BadgeClasses that it has defined. Anyone can create and host an Issuer file to start issuing Open Badges. Issuers may also serve as recipients of Open Badges, often identified within an Assertion by specific properties, like their url or contact email address.",
+  "type" : "object",
+  "properties" : {
+    "id" : {
+      "description" : "Unique URI for the Issuer/Profile file.",
+      "$comment" : "Origin: URI (DerivedType); A `NormalizedString` that respresents a Uniform Resource Identifier (URI).",
+      "type" : "string"
+    },
+    "type" : {
+      "type" : "array",
+      "minItems" : 1,
+      "contains" : {
+        "enum" : [ "Profile" ]
+      },
+      "items" : {
+        "description" : "The value of the type property MUST be an unordered set. One of the items MUST be the IRI 'Profile'.",
+        "$comment" : "Origin: IRI (DerivedType); A `NormalizedString` that represents an Internationalized Resource Identifier (IRI), which extends the ASCII characters subset of the Uniform Resource Identifier (URI).",
+        "type" : "string"
+      }
+    },
+    "name" : {
+      "description" : "The name of the entity or organization.",
+      "$comment" : "Origin: String (PrimitiveType); Character strings.",
+      "type" : "string"
+    },
+    "url" : {
+      "description" : "The homepage or social media profile of the entity, whether individual or institutional. Should be a URL/URI Accessible via HTTP.",
+      "$comment" : "Origin: URI (DerivedType); A `NormalizedString` that respresents a Uniform Resource Identifier (URI).",
+      "type" : "string"
+    },
+    "phone" : {
+      "description" : "A phone number.",
+      "$comment" : "Origin: PhoneNumber (DerivedType); A `NormalizedString` representing a phone number.",
+      "type" : "string"
+    },
+    "description" : {
+      "description" : "A short description of the issuer entity or organization.",
+      "$comment" : "Origin: String (PrimitiveType); Character strings.",
+      "type" : "string"
+    },
+    "endorsement" : {
+      "type" : "array",
+      "items" : {
+        "$ref" : "#/$defs/EndorsementCredential"
+      }
+    },
+    "endorsementJwt" : {
+      "type" : "array",
+      "items" : {
+        "description" : "Allows endorsers to make specific claims about the individual or organization represented by this profile. These endorsements are signed with the VC-JWT proof format.",
+        "$comment" : "Origin: CompactJws (DerivedType); A `String` in Compact JWS format [[RFC7515]].",
+        "type" : "string",
+        "pattern" : "^[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]*\\.[a-zA-Z0-9_-]+$"
+      }
+    },
+    "image" : {
+      "$ref" : "#/$defs/Image"
+    },
+    "email" : {
+      "description" : "An email address.",
+      "$comment" : "Origin: EmailAddress (DerivedType); A `NormalizedString` representing an email address.",
+      "type" : "string"
+    },
+    "address" : {
+      "$ref" : "#/$defs/Address"
+    },
+    "otherIdentifier" : {
+      "type" : "array",
+      "items" : {
+        "$ref" : "#/$defs/IdentifierEntry"
+      }
+    },
+    "official" : {
+      "description" : "If the entity is an organization, `official` is the name of an authorized official of the organization.",
+      "$comment" : "Origin: String (PrimitiveType); Character strings.",
+      "type" : "string"
+    },
+    "parentOrg" : {
+      "$ref" : "#/$defs/Profile"
+    },
+    "familyName" : {
+      "description" : "Family name. In the western world, often referred to as the 'last name' of a person.",
+      "$comment" : "Origin: String (PrimitiveType); Character strings.",
+      "type" : "string"
+    },
+    "givenName" : {
+      "description" : "Given name. In the western world, often referred to as the 'first name' of a person.",
+      "$comment" : "Origin: String (PrimitiveType); Character strings.",
+      "type" : "string"
+    },
+    "additionalName" : {
+      "description" : "Additional name. Includes what is often referred to as 'middle name' in the western world.",
+      "$comment" : "Origin: String (PrimitiveType); Character strings.",
+      "type" : "string"
+    },
+    "patronymicName" : {
+      "description" : "Patronymic name.",
+      "$comment" : "Origin: String (PrimitiveType); Character strings.",
+      "type" : "string"
+    },
+    "honorificPrefix" : {
+      "description" : "Honorific prefix(es) preceding a person's name (e.g. 'Dr', 'Mrs' or 'Mr').",
+      "$comment" : "Origin: String (PrimitiveType); Character strings.",
+      "type" : "string"
+    },
+    "honorificSuffix" : {
+      "description" : "Honorific suffix(es) following a person's name (e.g. 'M.D, PhD').",
+      "$comment" : "Origin: String (PrimitiveType); Character strings.",
+      "type" : "string"
+    },
+    "familyNamePrefix" : {
+      "description" : "Family name prefix. As used in some locales, this is the leading part of a family name (e.g. 'de' in the name 'de Boer').",
+      "$comment" : "Origin: String (PrimitiveType); Character strings.",
+      "type" : "string"
+    },
+    "dateOfBirth" : {
+      "description" : "Birthdate of the person.",
+      "$comment" : "Origin: Date (PrimitiveType); An [[ISO8601]] calendar date using the syntax YYYY-MM-DD.",
+      "type" : "string",
+      "format" : "date"
+    }
+  },
+  "required" : [ "id", "type" ],
+  "additionalProperties" : true,
+  "$defs" : {
+    "EndorsementCredential" : {
+      "description" : "A verifiable credential that asserts a claim about an entity. As described in [[[#data-integrity]]], at least one proof mechanism, and the details necessary to evaluate that proof, MUST be expressed for a credential to be a verifiable credential. In the case of an embedded proof, the credential MUST append the proof in the `proof` property.",
+      "type" : "object",
+      "properties" : {
+        "@context" : {
+          "type" : "array",
+          "minItems" : 2,
+          "items" : [ {
+            "enum" : [ "https://www.w3.org/ns/credentials/v2" ]
+          }, {
+            "type" : "string",
+            "pattern" : "^https:\\/\\/purl\\.imsglobal\\.org\\/spec\\/ob\\/v3p0\\/context(-3\\.\\d\\.\\d)*\\.json$"
+          } ],
+          "additionalItems" : {
+            "$ref" : "#/$defs/Context"
+          }
+        },
+        "type" : {
+          "allOf" : [ {
+            "type" : "array",
+            "minItems" : 1,
+            "contains" : {
+              "enum" : [ "VerifiableCredential" ]
+            },
+            "items" : {
+              "description" : "The value of the type property MUST be an unordered set. One of the items MUST be the URI 'VerifiableCredential', and one of the items MUST be the URI 'EndorsementCredential'.",
+              "$comment" : "Origin: IRI (DerivedType); A `NormalizedString` that represents an Internationalized Resource Identifier (IRI), which extends the ASCII characters subset of the Uniform Resource Identifier (URI).",
+              "type" : "string"
+            }
+          }, {
+            "type" : "array",
+            "minItems" : 1,
+            "contains" : {
+              "enum" : [ "EndorsementCredential" ]
+            },
+            "items" : {
+              "description" : "The value of the type property MUST be an unordered set. One of the items MUST be the URI 'VerifiableCredential', and one of the items MUST be the URI 'EndorsementCredential'.",
+              "$comment" : "Origin: IRI (DerivedType); A `NormalizedString` that represents an Internationalized Resource Identifier (IRI), which extends the ASCII characters subset of the Uniform Resource Identifier (URI).",
+              "type" : "string"
+            }
+          } ]
+        },
+        "id" : {
+          "description" : "Unambiguous reference to the credential.",
+          "$comment" : "Origin: URI (DerivedType); A `NormalizedString` that respresents a Uniform Resource Identifier (URI).",
+          "type" : "string"
+        },
+        "name" : {
+          "description" : "The name of the credential for display purposes in wallets. For example, in a list of credentials and in detail views.",
+          "$comment" : "Origin: String (PrimitiveType); Character strings.",
+          "type" : "string"
+        },
+        "description" : {
+          "description" : "The short description of the credential for display purposes in wallets.",
+          "$comment" : "Origin: String (PrimitiveType); Character strings.",
+          "type" : "string"
+        },
+        "credentialSubject" : {
+          "$ref" : "#/$defs/EndorsementSubject"
+        },
+        "awardedDate" : {
+          "description" : "Timestamp of when the credential was awarded. `validFrom` is used to determine the most recent version of a Credential in conjunction with `issuer` and `id`. Consequently, the only way to update a Credental is to update the `validFrom`, losing the date when the Credential was originally awarded. `awardedDate` is meant to keep this original date.",
+          "$comment" : "Origin: DateTimeZ (DerivedType); A `DateTime` with the trailing timezone specifier included, e.g. `2021-09-07T02:09:59+02:00`",
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "issuer" : {
+          "$ref" : "#/$defs/ProfileRef"
+        },
+        "validFrom" : {
+          "description" : "Timestamp of when the credential becomes valid.",
+          "$comment" : "Origin: DateTimeZ (DerivedType); A `DateTime` with the trailing timezone specifier included, e.g. `2021-09-07T02:09:59+02:00`",
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "validUntil" : {
+          "description" : "If the credential has some notion of validity period, this indicates a timestamp when a credential should no longer be considered valid. After this time, the credential should be considered invalid.",
+          "$comment" : "Origin: DateTimeZ (DerivedType); A `DateTime` with the trailing timezone specifier included, e.g. `2021-09-07T02:09:59+02:00`",
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "proof" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/$defs/Proof"
+          }
+        },
+        "credentialSchema" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/$defs/CredentialSchema"
+          }
+        },
+        "credentialStatus" : {
+          "$ref" : "#/$defs/CredentialStatus"
+        },
+        "refreshService" : {
+          "$ref" : "#/$defs/RefreshService"
+        },
+        "termsOfUse" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/$defs/TermsOfUse"
+          }
+        }
+      },
+      "required" : [ "@context", "type", "id", "name", "credentialSubject", "issuer", "validFrom" ],
+      "additionalProperties" : true
+    },
+    "CredentialStatus" : {
+      "description" : "The information in CredentialStatus is used to discover information about the current status of a verifiable credential, such as whether it is suspended or revoked.",
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "description" : "The value MUST be the URL of the issuer's credential status method.",
+          "$comment" : "Origin: URI (DerivedType); A `NormalizedString` that respresents a Uniform Resource Identifier (URI).",
+          "type" : "string"
+        },
+        "type" : {
+          "description" : "The name of the credential status method.",
+          "$comment" : "Origin: IRI (DerivedType); A `NormalizedString` that represents an Internationalized Resource Identifier (IRI), which extends the ASCII characters subset of the Uniform Resource Identifier (URI).",
+          "type" : "string"
+        }
+      },
+      "required" : [ "id", "type" ],
+      "additionalProperties" : true
+    },
+    "IdentifierEntry" : {
+      "description" : "No description supplied.",
+      "type" : "object",
+      "properties" : {
+        "type" : {
+          "description" : "The value of the type property MUST be an unordered set. One of the items MUST be the IRI 'IdentifierEntry'.",
+          "$comment" : "Origin: IRI (DerivedType); A `NormalizedString` that represents an Internationalized Resource Identifier (IRI), which extends the ASCII characters subset of the Uniform Resource Identifier (URI).",
+          "type" : "string",
+          "enum" : [ "IdentifierEntry" ]
+        },
+        "identifier" : {
+          "description" : "An identifier.",
+          "$comment" : "Origin: Identifier (DerivedType); A `NormalizedString` that functions as an identifier.",
+          "type" : "string"
+        },
+        "identifierType" : {
+          "description" : "The identifier type.",
+          "$comment" : "Origin: IdentifierTypeEnum (EnumExt)",
+          "oneOf" : [ {
+            "type" : "string",
+            "enum" : [ "name", "sourcedId", "systemId", "productId", "userName", "accountId", "emailAddress", "nationalIdentityNumber", "isbn", "issn", "lisSourcedId", "oneRosterSourcedId", "sisSourcedId", "ltiContextId", "ltiDeploymentId", "ltiToolId", "ltiPlatformId", "ltiUserId", "identifier" ]
+          }, {
+            "type" : "string",
+            "pattern" : "(ext:)[a-z|A-Z|0-9|.|-|_]+"
+          } ]
+        }
+      },
+      "required" : [ "type", "identifier", "identifierType" ],
+      "additionalProperties" : false
+    },
+    "Proof" : {
+      "description" : "A JSON-LD Linked Data proof.",
+      "type" : "object",
+      "properties" : {
+        "type" : {
+          "description" : "Signature suite used to produce proof.",
+          "$comment" : "Origin: IRI (DerivedType); A `NormalizedString` that represents an Internationalized Resource Identifier (IRI), which extends the ASCII characters subset of the Uniform Resource Identifier (URI).",
+          "type" : "string"
+        },
+        "created" : {
+          "description" : "Date the proof was created.",
+          "$comment" : "Origin: DateTime (PrimitiveType); An [[ISO8601]] time using the syntax YYYY-MM-DDThh:mm:ss.",
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "cryptosuite" : {
+          "description" : "The suite used to create the proof.",
+          "$comment" : "Origin: String (PrimitiveType); Character strings.",
+          "type" : "string"
+        },
+        "challenge" : {
+          "description" : "A value chosen by the verifier to mitigate authentication proof replay attacks.",
+          "$comment" : "Origin: String (PrimitiveType); Character strings.",
+          "type" : "string"
+        },
+        "domain" : {
+          "description" : "The domain of the proof to restrict its use to a particular target.",
+          "$comment" : "Origin: String (PrimitiveType); Character strings.",
+          "type" : "string"
+        },
+        "nonce" : {
+          "description" : "A value chosen by the creator of proof to randomize proof values for privacy purposes.",
+          "$comment" : "Origin: String (PrimitiveType); Character strings.",
+          "type" : "string"
+        },
+        "proofPurpose" : {
+          "description" : "The purpose of the proof to be used with `verificationMethod`. MUST be 'assertionMethod'.",
+          "$comment" : "Origin: String (PrimitiveType); Character strings.",
+          "type" : "string"
+        },
+        "proofValue" : {
+          "description" : "Value of the proof.",
+          "$comment" : "Origin: String (PrimitiveType); Character strings.",
+          "type" : "string"
+        },
+        "verificationMethod" : {
+          "description" : "The URL of the public key that can verify the signature.",
+          "$comment" : "Origin: URI (DerivedType); A `NormalizedString` that respresents a Uniform Resource Identifier (URI).",
+          "type" : "string"
+        }
+      },
+      "required" : [ "type" ],
+      "additionalProperties" : true
+    },
+    "RefreshService" : {
+      "description" : "The information in RefreshService is used to refresh the verifiable credential.",
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "description" : "The value MUST be the URL of the issuer's refresh service.",
+          "$comment" : "Origin: URI (DerivedType); A `NormalizedString` that respresents a Uniform Resource Identifier (URI).",
+          "type" : "string"
+        },
+        "type" : {
+          "description" : "The name of the refresh service method.",
+          "$comment" : "Origin: IRI (DerivedType); A `NormalizedString` that represents an Internationalized Resource Identifier (IRI), which extends the ASCII characters subset of the Uniform Resource Identifier (URI).",
+          "type" : "string"
+        }
+      },
+      "required" : [ "id", "type" ],
+      "additionalProperties" : true
+    },
+    "Image" : {
+      "description" : "Metadata about images that represent assertions, achieve or profiles. These properties can typically be represented as just the id string of the image, but using a fleshed-out document allows for including captions and other applicable metadata.",
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "description" : "The URI or Data URI of the image.",
+          "$comment" : "Origin: URI (DerivedType); A `NormalizedString` that respresents a Uniform Resource Identifier (URI).",
+          "type" : "string"
+        },
+        "type" : {
+          "description" : "MUST be the IRI 'Image'.",
+          "$comment" : "Origin: IRI (DerivedType); A `NormalizedString` that represents an Internationalized Resource Identifier (IRI), which extends the ASCII characters subset of the Uniform Resource Identifier (URI).",
+          "type" : "string",
+          "enum" : [ "Image" ]
+        },
+        "caption" : {
+          "description" : "The caption for the image.",
+          "$comment" : "Origin: String (PrimitiveType); Character strings.",
+          "type" : "string"
+        }
+      },
+      "required" : [ "id", "type" ],
+      "additionalProperties" : false
+    },
+    "EndorsementSubject" : {
+      "description" : "A collection of information about the subject of the endorsement.",
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "description" : "The identifier of the individual, entity, organization, assertion, or achievement that is endorsed.",
+          "$comment" : "Origin: URI (DerivedType); A `NormalizedString` that respresents a Uniform Resource Identifier (URI).",
+          "type" : "string"
+        },
+        "type" : {
+          "type" : "array",
+          "minItems" : 1,
+          "contains" : {
+            "enum" : [ "EndorsementSubject" ]
+          },
+          "items" : {
+            "description" : "The value of the type property MUST be an unordered set. One of the items MUST be the URI 'EndorsementSubject'.",
+            "$comment" : "Origin: IRI (DerivedType); A `NormalizedString` that represents an Internationalized Resource Identifier (IRI), which extends the ASCII characters subset of the Uniform Resource Identifier (URI).",
+            "type" : "string"
+          }
+        },
+        "endorsementComment" : {
+          "description" : "Allows endorsers to make a simple claim in writing about the entity.",
+          "$comment" : "Origin: Markdown (DerivedType); A `String` that may contain Markdown.",
+          "type" : "string"
+        }
+      },
+      "required" : [ "id", "type" ],
+      "additionalProperties" : true
+    },
+    "Context" : {
+      "description" : "JSON-LD Context. Either a URI with the context definition or a Map with a local context definition MUST be supplied.",
+      "oneOf" : [ {
+        "description" : "A `NormalizedString` that respresents a Uniform Resource Identifier (URI).",
+        "$comment" : "Origin: URI (DerivedType); A `NormalizedString` that respresents a Uniform Resource Identifier (URI).",
+        "type" : "string"
+      }, {
+        "description" : "A map representing an object with unknown, arbitrary properties",
+        "$comment" : "Origin: Map (Unordered); A map representing an object with unknown, arbitrary properties",
+        "type" : "object"
+      } ]
+    },
+    "TermsOfUse" : {
+      "description" : "Terms of use can be utilized by an issuer or a holder to communicate the terms under which a verifiable credential or verifiable presentation was issued",
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "description" : "The value MUST be a URI identifying the term of use.",
+          "$comment" : "Origin: URI (DerivedType); A `NormalizedString` that respresents a Uniform Resource Identifier (URI).",
+          "type" : "string"
+        },
+        "type" : {
+          "description" : "The value MUST identify the type of the terms of use.",
+          "$comment" : "Origin: IRI (DerivedType); A `NormalizedString` that represents an Internationalized Resource Identifier (IRI), which extends the ASCII characters subset of the Uniform Resource Identifier (URI).",
+          "type" : "string"
+        }
+      },
+      "required" : [ "type" ],
+      "additionalProperties" : true
+    },
+    "ProfileRef" : {
+      "description" : "A description of the individual, entity, or organization that issued the credential. Either a URI with the Unique URI for the Issuer/Profile file, or a Profile object MUST be supplied.",
+      "oneOf" : [ {
+        "description" : "A `NormalizedString` that respresents a Uniform Resource Identifier (URI).",
+        "$comment" : "Origin: URI (DerivedType); A `NormalizedString` that respresents a Uniform Resource Identifier (URI).",
+        "type" : "string"
+      }, {
+        "$ref" : "#/$defs/Profile"
+      } ]
+    },
+    "Address" : {
+      "description" : "An address for the described entity.",
+      "type" : "object",
+      "properties" : {
+        "type" : {
+          "type" : "array",
+          "minItems" : 1,
+          "contains" : {
+            "enum" : [ "Address" ]
+          },
+          "items" : {
+            "description" : "The value of the type property MUST be an unordered set. One of the items MUST be the IRI 'Address'.",
+            "$comment" : "Origin: IRI (DerivedType); A `NormalizedString` that represents an Internationalized Resource Identifier (IRI), which extends the ASCII characters subset of the Uniform Resource Identifier (URI).",
+            "type" : "string"
+          }
+        },
+        "addressCountry" : {
+          "description" : "A country.",
+          "$comment" : "Origin: String (PrimitiveType); Character strings.",
+          "type" : "string"
+        },
+        "addressCountryCode" : {
+          "description" : "A country code. The value must be a ISO 3166-1 alpha-2 country code [[ISO3166-1]].",
+          "$comment" : "Origin: CountryCode (DerivedType); A two-digit ISO 3166-1 alpha-2 country code [[ISO3166-1]].",
+          "type" : "string"
+        },
+        "addressRegion" : {
+          "description" : "A region within the country.",
+          "$comment" : "Origin: String (PrimitiveType); Character strings.",
+          "type" : "string"
+        },
+        "addressLocality" : {
+          "description" : "A locality within the region.",
+          "$comment" : "Origin: String (PrimitiveType); Character strings.",
+          "type" : "string"
+        },
+        "streetAddress" : {
+          "description" : "A street address within the locality.",
+          "$comment" : "Origin: String (PrimitiveType); Character strings.",
+          "type" : "string"
+        },
+        "postOfficeBoxNumber" : {
+          "description" : "A post office box number for PO box addresses.",
+          "$comment" : "Origin: String (PrimitiveType); Character strings.",
+          "type" : "string"
+        },
+        "postalCode" : {
+          "description" : "A postal code.",
+          "$comment" : "Origin: String (PrimitiveType); Character strings.",
+          "type" : "string"
+        },
+        "geo" : {
+          "$ref" : "#/$defs/GeoCoordinates"
+        }
+      },
+      "required" : [ "type" ],
+      "additionalProperties" : true
+    },
+    "GeoCoordinates" : {
+      "description" : "The geographic coordinates of a location.",
+      "type" : "object",
+      "properties" : {
+        "type" : {
+          "description" : "The value of the type property MUST be an unordered set. One of the items MUST be the IRI 'GeoCoordinates'.",
+          "$comment" : "Origin: IRI (DerivedType); A `NormalizedString` that represents an Internationalized Resource Identifier (IRI), which extends the ASCII characters subset of the Uniform Resource Identifier (URI).",
+          "type" : "string",
+          "enum" : [ "GeoCoordinates" ]
+        },
+        "latitude" : {
+          "description" : "The latitude of the location [[WGS84]].",
+          "$comment" : "Origin: Float (PrimitiveType)",
+          "type" : "number"
+        },
+        "longitude" : {
+          "description" : "The longitude of the location [[WGS84]].",
+          "$comment" : "Origin: Float (PrimitiveType)",
+          "type" : "number"
+        }
+      },
+      "required" : [ "type", "latitude", "longitude" ],
+      "additionalProperties" : true
+    },
+    "Profile" : {
+      "description" : "A Profile is a collection of information that describes the entity or organization using Open Badges. Issuers must be represented as Profiles, and endorsers, or other entities may also be represented using this vocabulary. Each Profile that represents an Issuer may be referenced in many BadgeClasses that it has defined. Anyone can create and host an Issuer file to start issuing Open Badges. Issuers may also serve as recipients of Open Badges, often identified within an Assertion by specific properties, like their url or contact email address.",
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "description" : "Unique URI for the Issuer/Profile file.",
+          "$comment" : "Origin: URI (DerivedType); A `NormalizedString` that respresents a Uniform Resource Identifier (URI).",
+          "type" : "string"
+        },
+        "type" : {
+          "type" : "array",
+          "minItems" : 1,
+          "contains" : {
+            "enum" : [ "Profile" ]
+          },
+          "items" : {
+            "description" : "The value of the type property MUST be an unordered set. One of the items MUST be the IRI 'Profile'.",
+            "$comment" : "Origin: IRI (DerivedType); A `NormalizedString` that represents an Internationalized Resource Identifier (IRI), which extends the ASCII characters subset of the Uniform Resource Identifier (URI).",
+            "type" : "string"
+          }
+        },
+        "name" : {
+          "description" : "The name of the entity or organization.",
+          "$comment" : "Origin: String (PrimitiveType); Character strings.",
+          "type" : "string"
+        },
+        "url" : {
+          "description" : "The homepage or social media profile of the entity, whether individual or institutional. Should be a URL/URI Accessible via HTTP.",
+          "$comment" : "Origin: URI (DerivedType); A `NormalizedString` that respresents a Uniform Resource Identifier (URI).",
+          "type" : "string"
+        },
+        "phone" : {
+          "description" : "A phone number.",
+          "$comment" : "Origin: PhoneNumber (DerivedType); A `NormalizedString` representing a phone number.",
+          "type" : "string"
+        },
+        "description" : {
+          "description" : "A short description of the issuer entity or organization.",
+          "$comment" : "Origin: String (PrimitiveType); Character strings.",
+          "type" : "string"
+        },
+        "endorsement" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/$defs/EndorsementCredential"
+          }
+        },
+        "endorsementJwt" : {
+          "type" : "array",
+          "items" : {
+            "description" : "Allows endorsers to make specific claims about the individual or organization represented by this profile. These endorsements are signed with the VC-JWT proof format.",
+            "$comment" : "Origin: CompactJws (DerivedType); A `String` in Compact JWS format [[RFC7515]].",
+            "type" : "string",
+            "pattern" : "^[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]*\\.[a-zA-Z0-9_-]+$"
+          }
+        },
+        "image" : {
+          "$ref" : "#/$defs/Image"
+        },
+        "email" : {
+          "description" : "An email address.",
+          "$comment" : "Origin: EmailAddress (DerivedType); A `NormalizedString` representing an email address.",
+          "type" : "string"
+        },
+        "address" : {
+          "$ref" : "#/$defs/Address"
+        },
+        "otherIdentifier" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/$defs/IdentifierEntry"
+          }
+        },
+        "official" : {
+          "description" : "If the entity is an organization, `official` is the name of an authorized official of the organization.",
+          "$comment" : "Origin: String (PrimitiveType); Character strings.",
+          "type" : "string"
+        },
+        "parentOrg" : {
+          "$ref" : "#/$defs/Profile"
+        },
+        "familyName" : {
+          "description" : "Family name. In the western world, often referred to as the 'last name' of a person.",
+          "$comment" : "Origin: String (PrimitiveType); Character strings.",
+          "type" : "string"
+        },
+        "givenName" : {
+          "description" : "Given name. In the western world, often referred to as the 'first name' of a person.",
+          "$comment" : "Origin: String (PrimitiveType); Character strings.",
+          "type" : "string"
+        },
+        "additionalName" : {
+          "description" : "Additional name. Includes what is often referred to as 'middle name' in the western world.",
+          "$comment" : "Origin: String (PrimitiveType); Character strings.",
+          "type" : "string"
+        },
+        "patronymicName" : {
+          "description" : "Patronymic name.",
+          "$comment" : "Origin: String (PrimitiveType); Character strings.",
+          "type" : "string"
+        },
+        "honorificPrefix" : {
+          "description" : "Honorific prefix(es) preceding a person's name (e.g. 'Dr', 'Mrs' or 'Mr').",
+          "$comment" : "Origin: String (PrimitiveType); Character strings.",
+          "type" : "string"
+        },
+        "honorificSuffix" : {
+          "description" : "Honorific suffix(es) following a person's name (e.g. 'M.D, PhD').",
+          "$comment" : "Origin: String (PrimitiveType); Character strings.",
+          "type" : "string"
+        },
+        "familyNamePrefix" : {
+          "description" : "Family name prefix. As used in some locales, this is the leading part of a family name (e.g. 'de' in the name 'de Boer').",
+          "$comment" : "Origin: String (PrimitiveType); Character strings.",
+          "type" : "string"
+        },
+        "dateOfBirth" : {
+          "description" : "Birthdate of the person.",
+          "$comment" : "Origin: Date (PrimitiveType); An [[ISO8601]] calendar date using the syntax YYYY-MM-DD.",
+          "type" : "string",
+          "format" : "date"
+        }
+      },
+      "required" : [ "id", "type" ],
+      "additionalProperties" : true
+    },
+    "CredentialSchema" : {
+      "description" : "Identify the type and location of a data schema.",
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "description" : "The value MUST be a URI identifying the schema file. One instance of `CredentialSchema` MUST have an `id` that is the URL of the JSON Schema for this credential defined by this specification.",
+          "$comment" : "Origin: URI (DerivedType); A `NormalizedString` that respresents a Uniform Resource Identifier (URI).",
+          "type" : "string"
+        },
+        "type" : {
+          "description" : "The value MUST identify the type of data schema validation. One instance of `CredentialSchema` MUST have a `type` of 'JsonSchemaValidator2019'.",
+          "$comment" : "Origin: IRI (DerivedType); A `NormalizedString` that represents an Internationalized Resource Identifier (IRI), which extends the ASCII characters subset of the Uniform Resource Identifier (URI).",
+          "type" : "string"
+        }
+      },
+      "required" : [ "id", "type" ],
+      "additionalProperties" : true
+    }
+  }
+}

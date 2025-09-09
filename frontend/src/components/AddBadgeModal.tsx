@@ -12,6 +12,7 @@ const AddBadgeModal: React.FC<AddBadgeModalProps> = ({ show, onClose, onAdd }) =
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
+    debugger;
     e.preventDefault();
     setLoading(true);
     setValidationError('');

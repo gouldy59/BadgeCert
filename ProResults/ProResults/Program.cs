@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Microsoft.Extensions.FileProviders;
 using ProResults.Data;
 using ProResults.Services;
 // Ensure the required package is installed: Microsoft.AspNetCore.Mvc.NewtonsoftJson
@@ -91,6 +90,20 @@ using (var scope = app.Services.CreateScope())
             Id = Guid.NewGuid(),
             Email = "user@example.com",
             Name = "Demo User",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("password123")
+        });
+        context.Users.Add(new ProResults.Models.User
+        {
+            Id = Guid.NewGuid(),
+            Email = "shane.gould@prometric.com",
+            Name = "shane User",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("password123")
+        });
+        context.Users.Add(new ProResults.Models.User
+        {
+            Id = Guid.NewGuid(),
+            Email = "kerrie.Callaghan@prometric.com",
+            Name = "shane User",
             PasswordHash = BCrypt.Net.BCrypt.HashPassword("password123")
         });
         context.SaveChanges();
