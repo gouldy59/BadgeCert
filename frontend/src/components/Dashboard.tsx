@@ -273,6 +273,14 @@ const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
                   <div key={ScoreReport.id} className="col-md-6 mb-3">
                     <div className="card h-100">
                       <div className="card-body">
+                        <div className='text-center mb-3'>
+                          <img 
+                            src={ScoreReport.logoUrl} 
+                            alt={ScoreReport.name}
+                            className="img-fluid rounded"
+                            style={{ maxHeight: '120px' }}
+                          />
+                          </div>
                         <h5 className="card-title text-center">{ScoreReport.title}</h5>
                         <p className="card-text text-muted small">{ScoreReport.description}</p>
                             <div className="text-center mb-3">

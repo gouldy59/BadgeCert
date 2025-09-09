@@ -6,4 +6,5 @@ export interface ScoreReport {
   description: string;
   achievedDate: string;
   status: 'completed' | 'in-progress' | 'pending';
+  logoUrl: string;
 }

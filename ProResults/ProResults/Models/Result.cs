@@ -28,5 +28,7 @@ namespace ProResults.Models
         // Store image as byte array (optional, for a single image)
         public byte[]? ImageFile { get; set; }
 
+        public string LogoUrl { get; set; }
+
     }
 }

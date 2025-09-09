@@ -41,6 +41,7 @@ namespace ProResults.Controllers
                                             description = r.Description,
                                             status = r.Status,
                                             achievedDate = r.AchievedDate,
+                                            logoUrl = r.LogoUrl
                                   
                                         })
                                         .ToListAsync();

@@ -125,18 +125,20 @@ using (var scope = app.Services.CreateScope())
             AchievedDate = DateTime.UtcNow.ToLocalTime(),
             ImageFile = imageBytes,
             PdfFile = pdfBytes,
-            htmlBody = htmlBytes
+            htmlBody = htmlBytes,
+            LogoUrl = "https://localhost:7184/badges/ShaneLogo.png"
         });
         context.ScoreReports.Add(new ProResults.Models.ScoreReport()
         {
             Id = Guid.NewGuid(),
             email = "shane.gould@prometric.com",
             Title = "exam2",
-            Description = "exam2 description",
+            Description = "ScoreReportTeam description",
             AchievedDate = DateTime.UtcNow.AddHours(-4).ToLocalTime(),
             ImageFile = imageBytes,
             PdfFile = pdfBytes,
-            htmlBody = htmlBytes
+            htmlBody = htmlBytes,
+            LogoUrl = "https://localhost:7184/badges/ScoreReportTeamLogo.png"
         });
         context.SaveChanges();
     }
